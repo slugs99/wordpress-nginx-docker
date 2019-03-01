@@ -1,4 +1,4 @@
-version: '3.6'
+version: '3.3'
 services:
 
   wordpress:
@@ -38,8 +38,8 @@ services:
       - ${NGINX_CONF_DIR:-./nginx}:/etc/nginx/conf.d
       - ${NGINX_LOG_DIR:-./logs/nginx}:/var/log/nginx
       - ${WORDPRESS_DATA_DIR:-./wordpress}:/var/www/html
-      - ${SSL_CERTS_DIR:-./certs}:/etc/letsencrypt
-      - ${SSL_CERTS_DATA_DIR:-./certs-data}:/data/letsencrypt
+      - ${SSL_CERTS_DIR:-/etc/letsencrypt}:/etc/letsencrypt
+      - ${SSL_CERTS_DATA_DIR:-/etc/letsencrypt}:/data/letsencrypt
     depends_on:
       - wordpress
     restart: always
