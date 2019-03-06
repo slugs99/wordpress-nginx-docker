@@ -1,6 +1,5 @@
 version: '3.3'
 services:
-
   wordpress:
     image: wordpress:${WORDPRESS_VERSION:-php7.3-fpm}
     container_name: wordpress
@@ -14,6 +13,19 @@ services:
       - WORDPRESS_DB_PASSWORD=${WORDPRESS_DB_PASSWORD:-password}
     depends_on:
       - mysql
+    restart: always
+
+  express:
+    image: node:alpine
+    volumes:
+      - ./express:/var/www/html/express
+    environment:
+      NODE_ENV: production
+    container_name: express
+    command: npm run start
+    depends_on:
+      - mysql
+      - wordpress
     restart: always
 
   mysql:
@@ -32,14 +44,17 @@ services:
     image: nginx:${NGINX_VERSION:-latest}
     container_name: nginx
     ports:
-      - '80:80'
-      - '443:443'
+      - '8000:80'
+      - "3000:3000"
+      - '4430:443'
     volumes:
       - ${NGINX_CONF_DIR:-./nginx}:/etc/nginx/conf.d
       - ${NGINX_LOG_DIR:-./logs/nginx}:/var/log/nginx
       - ${WORDPRESS_DATA_DIR:-./wordpress}:/var/www/html
-      - ${SSL_CERTS_DIR:-/etc/letsencrypt}:/etc/letsencrypt
-      - ${SSL_CERTS_DATA_DIR:-/etc/letsencrypt}:/data/letsencrypt
+      - ${EXPRESS_DATA_DIR:-./express}:/var/www/express
+      # - ${SSL_CERTS_DIR:-/etc/letsencrypt}:/etc/letsencrypt
+      # - ${SSL_CERTS_DATA_DIR:-/etc/letsencrypt}:/data/letsencrypt
     depends_on:
       - wordpress
+      - express
     restart: always
