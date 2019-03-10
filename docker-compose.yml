@@ -19,12 +19,12 @@ services:
     image: node:alpine
     volumes:
       - ./express:/var/www/html/express
+    working_dir: /var/www/html/express
+    command: npm run start
     environment:
       NODE_ENV: production
     container_name: express
-    command: npm run start
     depends_on:
-      - mysql
       - wordpress
     restart: always
 
@@ -42,11 +42,14 @@ services:
 
   nginx:
     image: nginx:${NGINX_VERSION:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: nginx
     ports:
-      - '8000:80'
-      - "3000:3000"
-      - '4430:443'
+      - '80:80'
+      #- "3000:3000"
+      - '443:443'
     volumes:
       - ${NGINX_CONF_DIR:-./nginx}:/etc/nginx/conf.d
       - ${NGINX_LOG_DIR:-./logs/nginx}:/var/log/nginx
