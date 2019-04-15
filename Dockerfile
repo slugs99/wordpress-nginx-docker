@@ -17,7 +17,7 @@ CMD ["nodejs", "index.js"]
 # Bundle APP files
 #COPY src src/
 #COPY package.json .
-COPY ecosystem.config.js .
+#COPY ecosystem.config.js .
 
 # Install app dependencies
 #ENV NPM_CONFIG_LOGLEVEL warn
